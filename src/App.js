@@ -25,7 +25,7 @@ function App() {
   };
 
   const handleChoice = (card) => {
-    choiceOne ? setChoiceTwo(card) : setChoiceOne(card);
+    choiceOne ? setChoiceTwo(card.id) : setChoiceOne(card.id);
   };
 
   const resetTurn = () => {
@@ -35,18 +35,19 @@ function App() {
     setDisable(false);
   };
 
+  const choiceOneValue = cards.find((item) => item.id === choiceOne)?.value;
+  const choiceTwoValue = cards.find((item) => item.id === choiceTwo)?.value;
   useEffect(() => {
     if (choiceOne && choiceTwo) {
-      if (choiceOne.id !== choiceTwo.id) {
+      if (choiceOne !== choiceTwo) {
         setDisable(true);
-        if (choiceOne.value === choiceTwo.value) {
+        if (choiceOneValue === choiceTwoValue) {
           setCards((prev) =>
             prev.map((card) => {
-              if (card.value === choiceOne.value) {
+              if (card.value === choiceOneValue) {
                 return { ...card, match: true };
-              } else {
-                return card;
               }
+              return card;
             })
           );
           resetTurn();
@@ -58,7 +59,7 @@ function App() {
       }
     }
   }, [choiceOne, choiceTwo]);
-  
+
   const completed = cards.every((item) => item.match === true); //checked users complete the game or not
   useEffect(() => {
     handleStart();
@@ -70,31 +71,33 @@ function App() {
         <h1 className="text-white text-center w-full text-3xl">Memory Game</h1>
         <div className="w-[150px] h-10 mx-auto my-3 text-white border border-white rounded-md duration-500 hover:scale-105">
           <button className="w-full h-full " onClick={handleStart}>
-            {!completed ? "Start" : "Restart"}
+            {completed ? "Restart" : "Start"}
           </button>
         </div>
         <p className="text-white text-center">Turn: {turn}</p>
-        {!completed ? (
+        {completed ? (
+          <div className=" mt-32  text-4xl text-green-500 animate-bounce text-center">
+            Congratulation! You finished in {turn} turns
+          </div>
+        ) : (
           <div className="flex">
             <div className="grid grid-cols-4 gap-5 w-[800px] mx-auto mt-5">
-              {cards?.map((item) => {
+              {cards.map((item) => {
                 return (
                   <Card
                     key={item.id}
                     item={item}
                     handleChoice={handleChoice}
                     matched={
-                      item === choiceOne || item === choiceTwo || item.match
+                      item.id === choiceOne ||
+                      item.id === choiceTwo ||
+                      item.match
                     }
                     disable={disable}
                   />
                 );
               })}
             </div>
-          </div>
-        ) : (
-          <div className=" mt-32  text-4xl text-green-500 animate-bounce text-center">
-            Congratulation! You finished in {turn} turns
           </div>
         )}
       </div>
