@@ -1,12 +1,19 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Card from "./components/Card";
-import { dataImg } from "./data.js";
+import { dataImg } from "./data";
+
+interface PropsData {
+  id: number;
+  src: string;
+  value: number;
+  match: boolean;
+}
 
 function App() {
   const [turn, setTurn] = useState(0);
-  const [cards, setCards] = useState([]);
-  const [choiceOne, setChoiceOne] = useState(null);
-  const [choiceTwo, setChoiceTwo] = useState(null);
+  const [cards, setCards] = useState<PropsData[] | []>([]);
+  const [choiceOne, setChoiceOne] = useState<number | null>();
+  const [choiceTwo, setChoiceTwo] = useState<number | null>();
   const [disable, setDisable] = useState(false);
 
   const handleStart = () => {
@@ -24,9 +31,10 @@ function App() {
     setChoiceTwo(null);
   };
 
-  const handleChoice = (card) => {
-    choiceOne ? setChoiceTwo(card.id) : setChoiceOne(card.id);
+  const handleChoice = (id: number) => {
+    choiceOne ? setChoiceTwo(id) : setChoiceOne(id);
   };
+console.log(choiceOne);
 
   const resetTurn = () => {
     setChoiceOne(null);
@@ -86,7 +94,6 @@ function App() {
                 return (
                   <Card
                     key={item.id}
-                    item={item}
                     handleChoice={handleChoice}
                     matched={
                       item.id === choiceOne ||
@@ -94,6 +101,8 @@ function App() {
                       item.match
                     }
                     disable={disable}
+                    src={item.src}
+                    id={item.id}
                   />
                 );
               })}
