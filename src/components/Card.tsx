@@ -1,5 +1,5 @@
 import React from "react";
-import { CardInterface } from "../App";
+import { CardInterface } from "../card.type";
 
 interface Props {
   item: CardInterface;
