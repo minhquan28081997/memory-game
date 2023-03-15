@@ -1,13 +1,16 @@
 import React, { useEffect, useRef, useState } from "react";
+import { HiMenuAlt3 } from "react-icons/hi";
 
 import Card from "./components/Card";
 import GoalBoard from "./components/GoalBoard";
-import { CardInterface } from "./card.type";
 
-import { useAppSelector, useAppDispatch } from "./hooks";
+import { CardInterface } from "./card.type";
+import { RootState } from "./store";
+
+import { useDispatch, useSelector } from "react-redux";
 import { changeMatchedCard, randomCard } from "./actions/cardAction";
 
-const TIMEOUT = 2;
+const TIMEOUT = 30;
 
 function App() {
   const [turn, setTurn] = useState(0);
@@ -17,11 +20,12 @@ function App() {
   const [completed, setCompleted] = useState(false);
   const [goalBoard, setGoalBoard] = useState<number[]>([]);
   const [time, setTime] = useState<number>(TIMEOUT);
+  const [isOpenGoalBoard, setIsOpenGoalBoard] = useState(false);
 
   const intervalId = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  const cards = useAppSelector((state) => state.card.card);
-  const dispatch = useAppDispatch();
+  const cards = useSelector((state: RootState) => state.card.card);
+  const dispatch = useDispatch();
 
   const resetGame = () => {
     dispatch(randomCard());
@@ -113,23 +117,44 @@ function App() {
         <h1 className="text-white text-center w-full text-3xl">Memory Game</h1>
         <div className="w-[150px] h-10 mx-auto my-3 text-white border border-white rounded-md duration-500 hover:scale-105">
           <button className="w-full h-full " onClick={startGame}>
-            {completed || time === 0 ? "Restart" : "Start"}
+            {completed || !time ? "Restart" : "Start"}
           </button>
         </div>
-        <div className="flex justify-around text-white text-center">
-          <p>Turn: {turn}</p>
-          <p>Time: {time}</p>
-        </div>
-        <div className="relative flex justify-center gap-5">
+        <div className="relative flex flex-col">
+          <div className="flex justify-between items-center text-white">
+            <p>Turn: {turn}</p>
+            <div className="opacity-80 duration-150 hover:opacity-100">
+              <button onClick={() => setIsOpenGoalBoard((prev) => !prev)}>
+                <HiMenuAlt3 className="text-3xl" />
+              </button>
+            </div>
+          </div>
+
+          <div className="relative w-full bg-gray-500 rounded-full">
+            <div
+              className="h-3 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-xs text-blue-100 p-0.5 leading-none rounded-full"
+              style={{ width: `calc(${time} * 100% / ${TIMEOUT})` }}
+            >
+              <p className="absolute top-0 left-1/2 translate-x-[-50%]">{time}s</p>
+            </div>
+          </div>
+
+          {isOpenGoalBoard && (
+            <div className="absolute right-0 top-8 z-[1]">
+              <GoalBoard goalBoard={goalBoard} />
+            </div>
+          )}
           <div>
             {completed ? (
-              <div className=" mt-32  text-4xl text-green-500 animate-bounce text-center">
-                Congratulation! You finished in {turn} turns and{" "}
-                {TIMEOUT - time}s
+              <div className="mt-32 text-4xl text-green-500 text-center animate-clear">
+                <p className="animate-bounce">
+                  Congratulation! You finished in {turn} turns and{" "}
+                  {TIMEOUT - time}s
+                </p>
               </div>
             ) : (
-              <div className="flex">
-                <div className="grid grid-cols-4 gap-5 w-[800px] mx-auto mt-5">
+              <div className="">
+                <div className="grid grid-cols-4 gap-5 mt-5">
                   {cards.map((item: CardInterface) => (
                     <Card
                       key={item.id}
@@ -147,10 +172,7 @@ function App() {
               </div>
             )}
           </div>
-          <div>
-            <GoalBoard goalBoard={goalBoard} />
-          </div>
-          {time === 0 && (
+          {!time && (
             <div className="absolute w-full h-full animate-clear">
               <div className=" w-full h-full bg-[#333] opacity-80"></div>
               <p className="absolute top-1/2 left-1/2 translate-x-[-50%] translate-y-[-50%] text-red-500 text-6xl ">

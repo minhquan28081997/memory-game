@@ -19,6 +19,7 @@ const cardReducer = (state = initialState, action: AnyAction) => {
         .map((item, index) => ({ ...item, id: index + 1 }));
 
       return {
+        ...state,
         card: newData,
       };
     }
@@ -35,6 +36,7 @@ const cardReducer = (state = initialState, action: AnyAction) => {
       });
 
       return {
+        ...state,
         card: newData,
       };
     }

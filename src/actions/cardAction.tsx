@@ -11,7 +11,7 @@ export const randomCard = () => {
 
 export const changeMatchedCard = (payload: any) => {
   return {
-    type: "CHANGE_MATCHED_CARD",
+    type: ActionTypes.CHANGE,
     payload,
   };
 };

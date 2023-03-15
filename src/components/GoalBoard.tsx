@@ -3,22 +3,25 @@ import React from "react";
 const GoalBoard = ({ goalBoard }: any) => {
     
   return (
-    <table className="mt-5 border border-dashed border-[mediumvioletred] text-center w-[150px] text-white">
-      <thead className="border-dashed border-b border-[mediumvioletred]">
-        <tr>
-          <th>No</th>
-          <th>Turns</th>
-        </tr>
-      </thead>
-      <tbody>
-        {goalBoard.map((item: number, index: number) => (
-          <tr key={index}>
-            <td>{index}</td>
-            <td>{item}</td>
+    <div className="text-center text-white border border-dashed border-[mediumvioletred] rounded-lg bg-[#333] w-[180px]">
+      <h1 className="py-2 text-2xl border-b border-dashed border-[mediumvioletred]">Goal-Board</h1>
+      <table className="w-full">
+        <thead>
+          <tr>
+            <th className="pl-2">No</th>
+            <th>Turns</th>
           </tr>
-        ))}
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          {goalBoard.map((item: number, index: number) => (
+            <tr key={index}>
+              <td>{index}</td>
+              <td>{item}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
 };
 
