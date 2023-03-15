@@ -1,7 +1,7 @@
 import { AnyAction } from "redux";
 import { dataImg } from "../data";
 import { CardInterface } from "../card.type";
-import { ActionTypes } from "../actions/cardAction";
+import { ActionCardTypes } from "../actions/cardAction";
 
 interface CardState {
   card: CardInterface[];
@@ -13,7 +13,7 @@ const initialState: CardState = {
 
 const cardReducer = (state = initialState, action: AnyAction) => {
   switch (action.type) {
-    case ActionTypes.RANDOM: {
+    case ActionCardTypes.RANDOM: {
       const newData = [...dataImg, ...dataImg]
         .sort(() => 0.5 - Math.random())
         .map((item, index) => ({ ...item, id: index + 1 }));
@@ -24,7 +24,7 @@ const cardReducer = (state = initialState, action: AnyAction) => {
       };
     }
 
-    case ActionTypes.CHANGE: {
+    case ActionCardTypes.CHANGE: {
       const newData = action.payload.cards.map((card: CardInterface) => {
         if (card.value === action.payload.choiceOneValue) {
           return {

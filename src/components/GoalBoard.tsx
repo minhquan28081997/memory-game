@@ -1,6 +1,9 @@
 import React from "react";
+import { useSelector } from "react-redux";
+import { RootState } from "../store";
 
-const GoalBoard = ({ goalBoard }: any) => {
+const GoalBoard = () => {
+  const goalBoard = useSelector((state: RootState) => state.goalBoard.goalBoard)
     
   return (
     <div className="text-center text-white border border-dashed border-[mediumvioletred] rounded-lg bg-[#333] w-[180px]">
@@ -15,7 +18,7 @@ const GoalBoard = ({ goalBoard }: any) => {
         <tbody>
           {goalBoard.map((item: number, index: number) => (
             <tr key={index}>
-              <td>{index}</td>
+              <td>{index + 1}</td>
               <td>{item}</td>
             </tr>
           ))}

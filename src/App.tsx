@@ -9,27 +9,32 @@ import { RootState } from "./store";
 
 import { useDispatch, useSelector } from "react-redux";
 import { changeMatchedCard, randomCard } from "./actions/cardAction";
+import {
+  addTurnToGoalBoard,
+  nextTurn,
+  resetTurnToZero,
+} from "./actions/goalBoardAction";
 
 const TIMEOUT = 30;
 
 function App() {
-  const [turn, setTurn] = useState(0);
   const [choiceOne, setChoiceOne] = useState<number | null>(null);
   const [choiceTwo, setChoiceTwo] = useState<number | null>(null);
   const [disable, setDisable] = useState(false);
   const [completed, setCompleted] = useState(false);
-  const [goalBoard, setGoalBoard] = useState<number[]>([]);
   const [time, setTime] = useState<number>(TIMEOUT);
   const [isOpenGoalBoard, setIsOpenGoalBoard] = useState(false);
 
   const intervalId = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const cards = useSelector((state: RootState) => state.card.card);
+  const turn = useSelector((state: RootState) => state.goalBoard.turn);
   const dispatch = useDispatch();
 
   const resetGame = () => {
     dispatch(randomCard());
-    setTurn(0);
+    dispatch(resetTurnToZero());
+
     setCompleted(false);
     setChoiceOne(null);
     setChoiceTwo(null);
@@ -41,9 +46,10 @@ function App() {
   };
 
   const resetTurn = () => {
+    dispatch(nextTurn());
+
     setChoiceOne(null);
     setChoiceTwo(null);
-    setTurn((prev) => prev + 1);
     setDisable(false);
   };
 
@@ -99,7 +105,8 @@ function App() {
     const isNotCompleted = cards.some((item: CardInterface) => !item.match); //checked users complete the game or not
 
     if (!isNotCompleted) {
-      setGoalBoard([...goalBoard, turn]);
+      dispatch(addTurnToGoalBoard());
+
       setCompleted(true);
       clearInt();
     }
@@ -135,13 +142,15 @@ function App() {
               className="h-3 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-xs text-blue-100 p-0.5 leading-none rounded-full"
               style={{ width: `calc(${time} * 100% / ${TIMEOUT})` }}
             >
-              <p className="absolute top-0 left-1/2 translate-x-[-50%]">{time}s</p>
+              <p className="absolute top-0 left-1/2 translate-x-[-50%]">
+                {time}s
+              </p>
             </div>
           </div>
 
           {isOpenGoalBoard && (
             <div className="absolute right-0 top-8 z-[1]">
-              <GoalBoard goalBoard={goalBoard} />
+              <GoalBoard />
             </div>
           )}
           <div>
