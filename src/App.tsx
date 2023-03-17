@@ -24,6 +24,7 @@ function App() {
   const [completed, setCompleted] = useState(false);
   const [time, setTime] = useState<number>(TIMEOUT);
   const [isOpenGoalBoard, setIsOpenGoalBoard] = useState(false);
+  const [isAnimate, setIsAnimate] = useState(false);
 
   const intervalId = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -63,6 +64,7 @@ function App() {
   const startGame = () => {
     resetGame();
     setDisable(false);
+    setIsAnimate(true);
 
     clearInt();
     setTime(TIMEOUT);
@@ -77,6 +79,8 @@ function App() {
         return oldV - 1;
       });
     }, 1000);
+
+    setTimeout(() => setIsAnimate(false), 1000);
   };
 
   useEffect(() => {
@@ -93,9 +97,7 @@ function App() {
         dispatch(changeMatchedCard({ cards, choiceOneValue }));
         resetTurn();
       } else {
-        setTimeout(() => {
-          resetTurn();
-        }, 1000);
+        setTimeout(() => resetTurn(), 1000);
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -119,11 +121,14 @@ function App() {
   }, []);
 
   return (
-    <div className="bg-[#333] min-h-[100vh]">
+    <div
+      className="bg-[#333] min-h-[100vh]"
+      onClick={() => isOpenGoalBoard && setIsOpenGoalBoard(false)}
+    >
       <div className="container mx-auto py-5">
         <h1 className="text-white text-center w-full text-3xl">Memory Game</h1>
-        <div className="w-[150px] h-10 mx-auto my-3 text-white border border-white rounded-md duration-500 hover:scale-105">
-          <button className="w-full h-full " onClick={startGame}>
+        <div className="w-[150px] h-10 mx-auto my-3 text-white duration-300 hover:scale-105">
+          <button className="w-full h-full border border-white rounded-md disabled:opacity-50 " onClick={startGame} disabled={isAnimate}>
             {completed || !time ? "Restart" : "Start"}
           </button>
         </div>
@@ -162,7 +167,7 @@ function App() {
                 </p>
               </div>
             ) : (
-              <div className="">
+              <div>
                 <div className="grid grid-cols-4 gap-5 mt-5">
                   {cards.map((item: CardInterface) => (
                     <Card
@@ -175,6 +180,7 @@ function App() {
                       disable={
                         disable || [choiceOne, choiceTwo].includes(item.id)
                       }
+                      isAnimate={isAnimate}
                     />
                   ))}
                 </div>

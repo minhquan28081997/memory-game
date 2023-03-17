@@ -6,9 +6,10 @@ interface Props {
   disable: boolean;
   matched: boolean;
   handleChoice: (id: number) => void;
+  isAnimate: boolean;
 }
 
-const Card = ({ item, handleChoice, disable, matched }: Props) => {
+const Card = ({ item, handleChoice, disable, matched, isAnimate }: Props) => {
   const handleClick = () => {
     if (!disable) {
       handleChoice(item.id);
@@ -23,8 +24,8 @@ const Card = ({ item, handleChoice, disable, matched }: Props) => {
       <img src={item.src} alt="" />
       <img
         className={`${
-          matched && "transform rotate-180 opacity-0 duration-300 "
-        } absolute top-0 h-full`}
+          matched && "transform rotate-180 opacity-0 duration-300"
+        } ${isAnimate && "animate-transformCard"} absolute top-0 h-full`}
         src="https://media.kasperskydaily.com/wp-content/uploads/sites/92/2020/02/17105257/game-ratings-featured.jpg"
         alt="card-layout"
       />
