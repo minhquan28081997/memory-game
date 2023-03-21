@@ -2,18 +2,19 @@ import React, { useEffect, useRef, useState } from "react";
 import { HiMenuAlt3 } from "react-icons/hi";
 
 import Card from "./components/Card";
-import GoalBoard from "./components/GoalBoard";
+import Board from "./components/Board";
 
 import { CardInterface } from "./card.type";
-import { RootState } from "./store";
+import { RootState } from "./store/store";
 
 import { useDispatch, useSelector } from "react-redux";
 import { changeMatchedCard, randomCard } from "./actions/cardAction";
 import {
-  addTurnToGoalBoard,
+  addToBoard,
   nextTurn,
   resetTurnToZero,
-} from "./actions/goalBoardAction";
+  fetchData,
+} from "./actions/boardAction";
 
 const TIMEOUT = 30;
 
@@ -29,7 +30,7 @@ function App() {
   const intervalId = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const cards = useSelector((state: RootState) => state.card.card);
-  const turn = useSelector((state: RootState) => state.goalBoard.turn);
+  const board = useSelector((state: RootState) => state.board);
   const dispatch = useDispatch();
 
   const resetGame = () => {
@@ -107,7 +108,7 @@ function App() {
     const isNotCompleted = cards.some((item: CardInterface) => !item.match); //checked users complete the game or not
 
     if (!isNotCompleted) {
-      dispatch(addTurnToGoalBoard());
+      dispatch(addToBoard(TIMEOUT - time));
 
       setCompleted(true);
       clearInt();
@@ -120,6 +121,10 @@ function App() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    dispatch(fetchData());
+  }, [dispatch]);
+
   return (
     <div
       className="bg-[#333] min-h-[100vh]"
@@ -128,13 +133,17 @@ function App() {
       <div className="container mx-auto py-5">
         <h1 className="text-white text-center w-full text-3xl">Memory Game</h1>
         <div className="w-[150px] h-10 mx-auto my-3 text-white duration-300 hover:scale-105">
-          <button className="w-full h-full border border-white rounded-md disabled:opacity-50 " onClick={startGame} disabled={isAnimate}>
+          <button
+            className="w-full h-full border border-white rounded-md disabled:opacity-50 "
+            onClick={startGame}
+            disabled={isAnimate}
+          >
             {completed || !time ? "Restart" : "Start"}
           </button>
         </div>
         <div className="relative flex flex-col">
           <div className="flex justify-between items-center text-white">
-            <p>Turn: {turn}</p>
+            <p>Turn: {board.turns}</p>
             <div className="opacity-80 duration-150 hover:opacity-100">
               <button onClick={() => setIsOpenGoalBoard((prev) => !prev)}>
                 <HiMenuAlt3 className="text-3xl" />
@@ -154,15 +163,22 @@ function App() {
           </div>
 
           {isOpenGoalBoard && (
-            <div className="absolute right-0 top-8 z-[1]">
-              <GoalBoard />
+            <div className="absolute right-0 top-8 bg-[#444] p-5 rounded-lg z-[1]">
+              <div className="grid grid-cols-3 gap-5 container mx-auto">
+                <div className="col-start-1 col-end-4">
+                  <Board board={board.currentBoard} title="Current Board" />
+                </div>
+                <Board board={board.lowestTurn} title="Top 5 Lowest Turn" />
+                <Board board={board.highestTurn} title="Top 5 Highest Turn" />
+                <Board board={board.lowestTime} title="Top 5 Lowest Time" />
+              </div>
             </div>
           )}
           <div>
             {completed ? (
               <div className="mt-32 text-4xl text-green-500 text-center animate-clear">
                 <p className="animate-bounce">
-                  Congratulation! You finished in {turn} turns and{" "}
+                  Congratulation! You finished in {board.turns} turns and{" "}
                   {TIMEOUT - time}s
                 </p>
               </div>

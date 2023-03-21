@@ -1,10 +1,10 @@
 import { combineReducers } from "redux";
 import cardReducer from "./cardReducer";
-import goalBoardReducer from "./goalBoardReducer";
+import boardReducer from "./boardReducer";
 
 const rootReducer = combineReducers({
   card: cardReducer,
-  goalBoard: goalBoardReducer
+  board: boardReducer
 });
 
 export default rootReducer;

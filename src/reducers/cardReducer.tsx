@@ -8,7 +8,9 @@ interface CardState {
 }
 
 const initialState: CardState = {
-  card: [],
+  card: [...dataImg, ...dataImg]
+    .sort(() => 0.5 - Math.random())
+    .map((item, index) => ({ ...item, id: index + 1 })),
 };
 
 const cardReducer = (state = initialState, action: AnyAction) => {
