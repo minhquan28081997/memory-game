@@ -1,6 +1,10 @@
-import { all, call, put, takeLatest } from "redux-saga/effects";
+import moment from "moment";
+import { all, call, put, select, takeLatest } from "redux-saga/effects";
 import {
   ActionBoardTypes,
+  addToBoardFailed,
+  addToBoardSuccess,
+  fetchData,
   fetchDataFailed,
   fetchDataSuccess,
   fetchHighestTurn,
@@ -8,7 +12,8 @@ import {
   fetchLowestTurn,
 } from "../actions/boardAction";
 import boardApi from "../api/boardAPI";
-import { IBoard } from "../card.type";
+import { IBoard, IPostBoard } from "../card.type";
+import { RootState } from "./store";
 
 function* getLowestTurns() {
   const { data } = yield call(boardApi.getAll);
@@ -18,7 +23,7 @@ function* getLowestTurns() {
       createdAt: item.createdAt,
       turns: item.turns,
     }))
-    .sort((a: any, b: any) => a.turns - b.turns)
+    .sort((a: IBoard, b: IBoard) => a.turns - b.turns)
     .splice(0, 5);
   yield put(fetchLowestTurn(newData));
 }
@@ -31,7 +36,7 @@ function* getHighestTurn() {
       createdAt: item.createdAt,
       turns: item.turns,
     }))
-    .sort((a: any, b: any) => b.turns - a.turns)
+    .sort((a: IBoard, b: IBoard) => b.turns - a.turns)
     .splice(0, 5);
   yield put(fetchHighestTurn(newData));
 }
@@ -44,7 +49,7 @@ function* getLowestTime() {
       createdAt: item.createdAt,
       time: item.time,
     }))
-    .sort((a: any, b: any) => a.time - b.time)
+    .sort((a: IBoard, b: IBoard) => a.time - b.time)
     .splice(0, 5);
   yield put(fetchLowestTime(newData));
 }
@@ -62,6 +67,26 @@ function* fetchBoardData() {
   }
 }
 
+function* postBoardData({ payload }: IPostBoard) {
+  const getTurns = (state: RootState) => state.board.turns;
+  const turns: number = yield select(getTurns);
+
+  const data = {
+    id: Math.random(),
+    turns: turns,
+    time: payload,
+    createdAt: moment().format(),
+  };
+  try {
+    yield call(boardApi.add, data);
+    yield put(addToBoardSuccess(data));
+    yield put(fetchData())
+  } catch (error) {
+    yield put(addToBoardFailed());
+  }
+}
+
 export function* getBoardSaga() {
   yield takeLatest(ActionBoardTypes.FETCH_DATA, fetchBoardData);
+  yield takeLatest(ActionBoardTypes.ADD, postBoardData);
 }

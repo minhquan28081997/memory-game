@@ -1,4 +1,4 @@
-import { IBoard } from "../card.type";
+import { IBoard, IPostBoard } from "../card.type";
 
 export const ActionBoardTypes = {
   FETCH_DATA: "FETCH_DATA",
@@ -10,8 +10,11 @@ export const ActionBoardTypes = {
   FETCH_LOWEST_TIME: "FETCH_LOWEST_TIME",
 
   ADD: "ADD_TO_BOARD",
+  ADD_SUCCESS: "ADD_SUCCESS",
+  ADD_FAILED: "ADD_FAILED",
+
   NEXT_TURN: "NEXT_TURN",
-  RESET_TURN: "RESET_TURN",
+  RESET_TURN_TO_ZERO: "RESET_TURN_TO_ZERO",
 };
 
 export const fetchData = () => ({
@@ -39,11 +42,17 @@ export const fetchLowestTime = (payload: IBoard) => ({
   payload,
 });
 
-export const addToBoard = (payload: number) => ({
+export const addToBoard = (payload: number):IPostBoard => ({
   type: ActionBoardTypes.ADD,
   payload,
 });
+export const addToBoardSuccess = (payload: IBoard):IPostBoard => ({
+  type: ActionBoardTypes.ADD_SUCCESS,
+  payload,
+});
+export const addToBoardFailed = () => ({ type: ActionBoardTypes.ADD_FAILED });
 
 export const nextTurn = () => ({ type: ActionBoardTypes.NEXT_TURN });
 
-export const resetTurnToZero = () => ({ type: ActionBoardTypes.RESET_TURN });
+export const resetTurnToZero = () => ({ type: ActionBoardTypes.RESET_TURN_TO_ZERO });
+

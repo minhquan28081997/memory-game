@@ -1,4 +1,3 @@
-import moment from "moment";
 import { AnyAction } from "redux";
 import { ActionBoardTypes } from "../actions/boardAction";
 import { IBoard } from "../card.type";
@@ -18,7 +17,6 @@ const initialState: BoardType = {
   lowestTurn: [],
   highestTurn: [],
   lowestTime: [],
-
   currentBoard: [],
   turns: 0,
 };
@@ -69,17 +67,23 @@ const boardReducer = (state = initialState, action: AnyAction) => {
     }
 
     case ActionBoardTypes.ADD: {
-      const newData = [...state.currentBoard];
-      newData.push({
-        id: Math.random(),
-        turns: state.turns,
-        time: action.payload,
-        createdAt: moment().format()
-      });
-
       return {
         ...state,
+        loading: true,
+      };
+    }
+    case ActionBoardTypes.ADD_SUCCESS: {
+      const newData = [...state.currentBoard, action.payload];
+      return {
+        ...state,
+        loading: false,
         currentBoard: newData,
+      };
+    }
+    case ActionBoardTypes.ADD_FAILED: {
+      return {
+        ...state,
+        loading: false,
       };
     }
 
@@ -90,7 +94,7 @@ const boardReducer = (state = initialState, action: AnyAction) => {
       };
     }
 
-    case ActionBoardTypes.RESET_TURN: {
+    case ActionBoardTypes.RESET_TURN_TO_ZERO: {
       return {
         ...state,
         turns: 0,
