@@ -27,7 +27,7 @@ const Board = ({ title, board }: Props) => {
             <tr>
               <th>No</th>
               <th>{title === "Top 5 Lowest Time" ? "Time" : "Turn"}</th>
-              {title === 'Current Board' && <th>Time</th>}
+              {title === "Current Board" && <th>Time</th>}
               <th>Date</th>
             </tr>
           </thead>
@@ -35,8 +35,10 @@ const Board = ({ title, board }: Props) => {
             {board.map((item: IBoard, index: number) => (
               <tr key={item.id} className="text-center">
                 <td>{index + 1}</td>
-                <td>{item.turns || item.time}</td>
-                {title === 'Current Board' && <td>{item.time}</td>}
+                <td>
+                  {title === "Top 5 Lowest Time" ? item.time : item.turns}
+                </td>
+                {title === "Current Board" && <td>{item.time}</td>}
                 <td>{item.createdAt.slice(0, 10)}</td>
               </tr>
             ))}

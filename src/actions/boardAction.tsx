@@ -20,33 +20,31 @@ export const ActionBoardTypes = {
 export const fetchData = () => ({
   type: ActionBoardTypes.FETCH_DATA,
 });
-export const fetchDataSuccess = () => ({
+export const fetchDataSuccess = (payload: IBoard) => ({
   type: ActionBoardTypes.FETCH_DATA_SUCCESS,
+  payload,
 });
 export const fetchDataFailed = () => ({
   type: ActionBoardTypes.FETCH_DATA_FAILED,
 });
 
-export const fetchLowestTurn = (payload: IBoard) => ({
+export const fetchLowestTurn = () => ({
   type: ActionBoardTypes.FETCH_LOWEST_TURN,
-  payload,
 });
 
-export const fetchHighestTurn = (payload: IBoard) => ({
+export const fetchHighestTurn = () => ({
   type: ActionBoardTypes.FETCH_HIGHEST_TURN,
-  payload,
 });
 
-export const fetchLowestTime = (payload: IBoard) => ({
+export const fetchLowestTime = () => ({
   type: ActionBoardTypes.FETCH_LOWEST_TIME,
-  payload,
 });
 
-export const addToBoard = (payload: number):IPostBoard => ({
+export const addToBoard = (payload: number): IPostBoard => ({
   type: ActionBoardTypes.ADD,
   payload,
 });
-export const addToBoardSuccess = (payload: IBoard):IPostBoard => ({
+export const addToBoardSuccess = (payload: IBoard): IPostBoard => ({
   type: ActionBoardTypes.ADD_SUCCESS,
   payload,
 });
@@ -54,5 +52,6 @@ export const addToBoardFailed = () => ({ type: ActionBoardTypes.ADD_FAILED });
 
 export const nextTurn = () => ({ type: ActionBoardTypes.NEXT_TURN });
 
-export const resetTurnToZero = () => ({ type: ActionBoardTypes.RESET_TURN_TO_ZERO });
-
+export const resetTurnToZero = () => ({
+  type: ActionBoardTypes.RESET_TURN_TO_ZERO,
+});

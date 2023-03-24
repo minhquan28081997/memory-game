@@ -4,20 +4,23 @@ import { IBoard } from "../card.type";
 
 interface BoardType {
   loading: boolean;
+  board: IBoard[];
+  currentBoard: IBoard[];
+
   lowestTurn: IBoard[];
   highestTurn: IBoard[];
   lowestTime: IBoard[];
-
-  currentBoard: IBoard[];
   turns: number;
 }
 
 const initialState: BoardType = {
   loading: false,
+  board: [],
+  currentBoard: [],
+
   lowestTurn: [],
   highestTurn: [],
   lowestTime: [],
-  currentBoard: [],
   turns: 0,
 };
 
@@ -30,8 +33,10 @@ const boardReducer = (state = initialState, action: AnyAction) => {
       };
     }
     case ActionBoardTypes.FETCH_DATA_SUCCESS: {
+      const board = action.payload;
       return {
         ...state,
+        board,
         loading: false,
       };
     }
@@ -43,26 +48,32 @@ const boardReducer = (state = initialState, action: AnyAction) => {
     }
 
     case ActionBoardTypes.FETCH_LOWEST_TURN: {
-      const newData = action.payload;
+      const lowestTurn = state.board
+        .sort((a: IBoard, b: IBoard) => a.turns - b.turns)
+        .slice(0, 5);
       return {
         ...state,
-        lowestTurn: newData,
+        lowestTurn,
       };
     }
 
     case ActionBoardTypes.FETCH_HIGHEST_TURN: {
-      const newData = action.payload;
+      const highestTurn = state.board
+        .sort((a: IBoard, b: IBoard) => b.turns - a.turns)
+        .slice(0, 5);
       return {
         ...state,
-        highestTurn: newData,
+        highestTurn,
       };
     }
 
     case ActionBoardTypes.FETCH_LOWEST_TIME: {
-      const newData = action.payload;
+      const lowestTime = state.board
+        .sort((a: IBoard, b: IBoard) => a.time - b.time)
+        .slice(0, 5);
       return {
         ...state,
-        lowestTime: newData,
+        lowestTime,
       };
     }
 
@@ -73,11 +84,11 @@ const boardReducer = (state = initialState, action: AnyAction) => {
       };
     }
     case ActionBoardTypes.ADD_SUCCESS: {
-      const newData = [...state.currentBoard, action.payload];
+      const currentBoard = [...state.currentBoard, action.payload];
       return {
         ...state,
         loading: false,
-        currentBoard: newData,
+        currentBoard,
       };
     }
     case ActionBoardTypes.ADD_FAILED: {
