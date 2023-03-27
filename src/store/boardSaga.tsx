@@ -29,8 +29,7 @@ function* fetchBoardData() {
 }
 
 function* postBoardData({ payload }: IPostBoard) {
-  const getTurns = (state: RootState) => state.board.turns;
-  const turns: number = yield select(getTurns);
+  const turns: number = yield select(({ board }: RootState) => board.turns);
 
   const data = {
     id: Math.random(),
